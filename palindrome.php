@@ -2,6 +2,10 @@
 
 //palindrome
 function palindrome($n){
+    // by js
+    // var reverese = n.splite("").reverese().join("");
+    // if(n === reverese) return true;
+    
     $number = $n;
     $sum = 0;
     while(floor($number)){
