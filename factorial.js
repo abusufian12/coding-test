@@ -6,4 +6,10 @@ function calculateFactorial(number){
     return factorial_number;
 }
 
+// not accurate
+// function calculateFactorial(number){
+//     var n = number;
+//     return n = n*(n+1)*(n+2);
+// }
+
 console.log(calculateFactorial(8));
