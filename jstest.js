@@ -25,6 +25,19 @@
 //  }
 
 
+// const gamePlayers = {gameId01: [101, 102], gameId02:[201, 202]};
+// var new_game = [301, 302];
+// if ("gameId03" in gamePlayers) {
+//     if (gamePlayers["gameId01"].includes(102) == false) {
+//         gamePlayers["gameId01"].push(103)
+//     }
+//     console.log(gamePlayers["gameId01"]);
+// }else{
+//     gamePlayers["gameId03"] = new_game;
+// }
+// console.log(gamePlayers);
+
+//var playerId = Math.random().toString(10).substr(2, 2);
 
 
 

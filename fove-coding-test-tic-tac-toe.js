@@ -74,8 +74,17 @@ const INVALID_LOCATION = -8;
 //   - A valid unique ID for the new game
 // Errors:
 //   None
+var gameIds = [];
 function createGame() {
-    return -1;
+     //let id = Number(Math.random().toString(10).substr(2, 2));
+     var gameid = Math.floor(Math.random() * 199);
+     if (gameIds.includes(gameid) == false) {
+        gameIds.push(gameid);
+        return gameid;
+    }else{
+        return createGame();
+    }
+    // return -1;
 }
 
 // Adds a player to a game that has been created, but not started.
@@ -88,10 +97,40 @@ function createGame() {
 //   GAME_DOESNT_EXIST if the game id does not identify a valid game
 //   GAME_ENDED if the game has ended
 //   GAME_ONGOING if the game has already begun
-function addPlayer(gameId) {
-    return -1;
+var playerList = {};
+
+function checkGameIdExist(gameId, playerId){
+    var playerId = gameId+Math.floor(Math.random() * 11);
+    if (gameId in playerList) {
+        if (!!playerList && playerList[gameId].length >= 2) {
+            return GAME_ONGOING;
+        }else if (playerList[gameId].includes(playerId) == false) {
+            playerList[gameId].push(playerId);
+            return playerId;
+        }else{
+            return addPlayer(gameId);
+        }
+    }else{
+        playerList[gameId] = [playerId];
+        return playerId;
+    }
 }
 
+function addPlayer(gameId) {
+     
+    if (gameId > 0 && gameId < 200) {
+        if (!!playerList && gameId in gamePlayers) {
+            if (playerList[gameId].length >= 2) {
+                return GAME_ONGOING;
+            }
+        }
+
+        return checkGameIdExist(gameId);
+    }
+    else{
+        return GAME_DOESNT_EXIST;
+    }
+}
 // Allows a player to make a move
 //
 // After each valid move, the turn switches to the other player.
@@ -110,8 +149,66 @@ function addPlayer(gameId) {
 //   WRONG_TURN if this is not player A turn
 //   INVALID_LOCATION if boardX or boardY is outside the range of [0, 2], or if that spot has been used already
 //
+function checkBoardExist(gameId, playerId, boardX, boardY){
+
+    if (gameId > 0 && playerId > 0 ) {
+                        
+        if (boardX > 0 && boardX < 2) {
+            return boardX;
+        }else{
+            return INVALID_LOCATION;
+        }
+        if (boardY > 0 && boardY < 2) {
+            return boardY;
+        }else{
+            return INVALID_LOCATION;
+        }
+
+        return GAME_ONGOING;
+    }else{
+        return GAME_NOT_STARTED;
+    }
+
+    
+}
+
+var gamePlayers = {};
+
+function checkPlayerLength(gameId){
+    if (gamePlayers[gameId].length < 2) {
+        return GAME_NOT_STARTED;
+    }else{
+        return WRONG_TURN;
+    }
+}
+
 function makeMove(gameId, playerId, boardX, boardY) {
-    return -1;
+    // for player 
+    if (gameId > 0 && gameId < 200) {
+        if (playerId > 0) {
+            if (gameId in gamePlayers) {
+                if (gamePlayers[gameId].includes(playerId) == false) {
+                    gamePlayers[gameId].push(playerId)
+                }
+            }else{
+                if (gameId in gamePlayers && gamePlayers[gameId].length >= 2) {
+                    checkBoardExist(gameId, playerId, boardX, boardY)
+                }else{
+                    gamePlayers[gameId] = [playerId];
+                    return GAME_NOT_STARTED;
+                }
+            }
+
+            return checkPlayerLength(gameId);            
+        }
+        else{
+            return GAME_NOT_STARTED;
+        }
+        
+    }else{
+        return GAME_DOESNT_EXIST;        
+    }
+    //return -1;
 }
 
 //////////////////////////////////////////////////////
@@ -208,7 +305,9 @@ class TestSuite {
         ];
     }
 
-    isValidId(id) { return id >= 0; }
+    isValidId(id) { 
+        return id >= 0; 
+    }
 
     // Simple assert helper
     check(expr, text) {
@@ -222,6 +321,7 @@ class TestSuite {
         this.check(gameId >= 0, "Negative game id");
         this.check(!(gameId in this.testGames), "Duplicate game id");
         this.testGames[gameId] = { players: [-1, -1] };
+        // console.log(gameId);
         return gameId;
     }
 
@@ -232,14 +332,19 @@ class TestSuite {
     }
 
     addTestPlayer(gameId) {
+       
         const playerId = addPlayer(gameId);
         if (playerId < 0)
             return playerId;
 
+        // console.log(gameId);    
         if (!(gameId in this.testGames))
             throw "Invalid gameID accepted to addPlayer " + gameId.toString();
 
         const game = this.testGames[gameId];
+        // console.log(game.players[0], 'player-0, gameId', gameId);
+        // console.log(game.players[1], '222');
+        // console.log(playerId, '333');
         if (!this.isValidId(game.players[0]))
             game.players[0] = playerId;
         else if (game.players[0] == playerId)
@@ -274,7 +379,7 @@ class TestSuite {
 
         // Make sure we can't make a move before adding players
         this.check(makeMove(gameId, 0, 0, 0) == GAME_NOT_STARTED, "Made a move with no players added");
-
+        
         // Add the first player
         let player1Id;
         this.check(this.isValidId(player1Id = this.addTestPlayer(gameId)), "Negative game id should not be valid");
@@ -285,13 +390,13 @@ class TestSuite {
         // Add the second player
         let player2Id;
         this.check(this.isValidId(player2Id = this.addTestPlayer(gameId)), "Negative game id should not be valid");
-
+        
         // Make sure we can't move with the 2nd player, but that the game has started
         this.check(makeMove(gameId, player2Id, 0, 0) == WRONG_TURN, "Made a move with only one player added");
-
         // Make sure that we can't add more players after that
-        for (let i = 0; i < 10; ++i)
+        for (let i = 0; i < 10; ++i){
             this.check(this.addTestPlayer(gameId) == GAME_ONGOING, "Adding players after the second should return GAME_ONGOING");
+        }
     }
 
 
@@ -300,7 +405,7 @@ class TestSuite {
 
         const player1Id = this.addTestPlayer(gameId);
         const b = this.addTestPlayer(gameId);
-
+        
         for (let i = 0; i < game.length; ++i) {
             const currentPlayer = i % 2 == 0 ? player1Id : b;
             const otherPlayer = i % 2 == 0 ? b : player1Id;
