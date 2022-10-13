@@ -1,7 +1,7 @@
 
 let items = [];
 let stack_top = 0;
-let items_limit = 5;
+let items_limit = 2;
 
 function Main(){
     
@@ -9,11 +9,13 @@ function Main(){
     PushItem(5);
     PushItem(7);
     PushItem(3);
+    PushItem(4);
 
     console.log(items, stack_top);
+    console.log(PushItem(5));
     
     PopItem();
-
+    console.log(PopItem());
     console.log(items, stack_top);
 
 
@@ -40,4 +42,4 @@ function PopItem(){
     }
 }
 
-Main();
+console.log(Main());

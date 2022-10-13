@@ -150,21 +150,17 @@ function addPlayer(gameId) {
 //   INVALID_LOCATION if boardX or boardY is outside the range of [0, 2], or if that spot has been used already
 //
 function checkBoardExist(gameId, playerId, boardX, boardY){
-
+    
     if (gameId > 0 && playerId > 0 ) {
-                        
+        console.log(gameId, playerId, boardX, boardY)                
         if (boardX > 0 && boardX < 2) {
             return boardX;
-        }else{
-            return INVALID_LOCATION;
-        }
-        if (boardY > 0 && boardY < 2) {
+        }else if (boardY > 0 && boardY < 2) {
             return boardY;
         }else{
             return INVALID_LOCATION;
         }
 
-        return GAME_ONGOING;
     }else{
         return GAME_NOT_STARTED;
     }
@@ -184,9 +180,13 @@ function checkPlayerLength(gameId){
 
 function makeMove(gameId, playerId, boardX, boardY) {
     // for player 
+    //console.log(gameId, gamePlayers);
     if (gameId > 0 && gameId < 200) {
+        
         if (playerId > 0) {
+            
             if (gameId in gamePlayers) {
+                
                 if (gamePlayers[gameId].includes(playerId) == false) {
                     gamePlayers[gameId].push(playerId)
                 }
@@ -195,14 +195,16 @@ function makeMove(gameId, playerId, boardX, boardY) {
                     checkBoardExist(gameId, playerId, boardX, boardY)
                 }else{
                     gamePlayers[gameId] = [playerId];
-                    return GAME_NOT_STARTED;
+                    // console.log(gameId, playerId, boardX, boardY);
+                    checkBoardExist(gameId, playerId, boardX, boardY)
+                    return GAME_NOT_STARTED;                    
                 }
             }
 
             return checkPlayerLength(gameId);            
         }
         else{
-            return GAME_NOT_STARTED;
+            return GAME_NOT_STARTED; 
         }
         
     }else{
@@ -405,7 +407,7 @@ class TestSuite {
 
         const player1Id = this.addTestPlayer(gameId);
         const b = this.addTestPlayer(gameId);
-        
+
         for (let i = 0; i < game.length; ++i) {
             const currentPlayer = i % 2 == 0 ? player1Id : b;
             const otherPlayer = i % 2 == 0 ? b : player1Id;
@@ -415,6 +417,7 @@ class TestSuite {
             this.check(this.addTestPlayer(gameId) == GAME_ONGOING, "Adding players during the game should return GAME_ONGOING");
 
             // Test that the wrong player can't move
+            //console.log(makeMove(gameId, otherPlayer, nextMove[0], nextMove[1]));
             this.check(makeMove(gameId, otherPlayer, nextMove[0], nextMove[1]) == WRONG_TURN, "Wrong player move accepted");
 
             // Test that the right player can't move to any previously used spot
