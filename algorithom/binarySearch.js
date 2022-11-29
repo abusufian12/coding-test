@@ -15,4 +15,4 @@ function binarySearch(arr, find_number) {
   }
 }
 
-console.log(binarySearch([2, 4, 5, 6, 7, 8, 9], 7));
+console.log(binarySearch([2, 4, 5, 6, 7, 8, 9], 7)); // it's need to sorted an array like [1, 2, 3];
