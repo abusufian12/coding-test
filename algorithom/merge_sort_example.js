@@ -9,7 +9,7 @@ function merge(left, right) {
       arr.push(right.shift());
     }
   }
-
+  console.log(arr, left, right);
   // Concatenating the leftover elements
   // (in case we didn't go through the entire left or right array)
   return [...arr, ...left, ...right];
@@ -24,16 +24,23 @@ function mergeSort(array) {
   }
 
   const left = array.splice(0, half);
-
+  console.log(half, left);
   return merge(mergeSort(left), mergeSort(array));
 }
 
 array = [4, 8, 7, 2, 11, 1, 3];
-console.log(mergeSort(array));
+mergeSort(array);
+//console.log(mergeSort(array));
 
 // another way
 /**
- * 
+ * step 1
+ * 4,8,7
+ * 4,8
+ * 4 
+ * 4,8
+ * 4,8,2
+ * 2,4,8
  * 
 function merge(arr, l, m, r)
 {
